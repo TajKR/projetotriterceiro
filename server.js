@@ -80,7 +80,7 @@ app.post('/chat', async (req, res) => {
         const mensagens = [
             {
                 role: "system",
-                content: "qua qua qua esse cara é um comédia"
+                content: "seja curto e direto com as respostas, vocês são um grupo de heróis daquele jogo castle crashers, então atue como cavaleiros"
             },
             ...historico
         ]
