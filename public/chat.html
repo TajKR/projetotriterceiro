@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -22,6 +23,7 @@
       <header class="chat-header">
         <h1 id="boasVindas">Bem-vindo ao Reino</h1>
       </header>
+
       <div id="caixaChat" class="janela-mensagens" aria-live="polite"></div>
 
       <form id="inputArea" class="formulario-envio">
@@ -30,75 +32,90 @@
       </form>
     </section>
   </main>
+
   <footer>© Taj Kozak Reichel - 2026 | Curitiba</footer>
+
   <script>
+    // VERIFICA SE O USUÁRIO ESTÁ LOGADO
     const usuarioLogado = localStorage.getItem('usuarioChat');
 
     if (!usuarioLogado) {
       alert('Você precisa fazer login primeiro!');
-      window.location.href = 'login.html';
+      window.location.replace('login.html');
+      throw new Error('Usuário não logado');
     }
-    const caixaChat = document.getElementById('caixaChat')
-    const inputArea = document.getElementById('inputArea')
-    const mensagem = document.getElementById('mensagem')
-    const btnEnviar = document.getElementById('btnEnviar')
+
+    const caixaChat = document.getElementById('caixaChat');
+    const inputArea = document.getElementById('inputArea');
+    const mensagem = document.getElementById('mensagem');
+    const btnEnviar = document.getElementById('btnEnviar');
 
     // Guarda a conversa para a IA lembrar do contexto
-    const historico = []
-
-    const usuarioLogado = localStorage.getItem('usuarioChat')
+    const historico = [];
 
     function adicionarMensagem(texto, tipo) {
-      const div = document.createElement('div')
-      div.className = `mensagem ${tipo}`
-      div.textContent = texto // textContent evita injeção de HTML
-      caixaChat.appendChild(div)
-      caixaChat.scrollTop = caixaChat.scrollHeight
-      return div
+      const div = document.createElement('div');
+      div.className = `mensagem ${tipo}`;
+      div.textContent = texto;
+
+      caixaChat.appendChild(div);
+      caixaChat.scrollTop = caixaChat.scrollHeight;
+
+      return div;
     }
 
     inputArea.addEventListener('submit', async (evento) => {
-      evento.preventDefault()
+      evento.preventDefault();
 
-      const texto = mensagem.value.trim()
-      if (!texto) return
+      const texto = mensagem.value.trim();
 
-      adicionarMensagem(texto, 'usuario')
-      historico.push({ role: 'user', content: texto })
+      if (!texto) return;
 
-      mensagem.value = ''
-      mensagem.disabled = true
-      btnEnviar.disabled = true
+      adicionarMensagem(texto, 'usuario');
+      historico.push({ role: 'user', content: texto });
 
-      const aguardando = adicionarMensagem('Pensando...', 'bot')
+      mensagem.value = '';
+      mensagem.disabled = true;
+      btnEnviar.disabled = true;
+
+      const aguardando = adicionarMensagem('Pensando...', 'bot');
 
       try {
         const resposta = await fetch('/chat', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({ historico })
-        })
+        });
 
-        const dados = await resposta.json()
+        const dados = await resposta.json();
 
         if (!resposta.ok) {
-          throw new Error(dados.erro || 'Erro ao falar com a IA')
+          throw new Error(dados.erro || 'Erro ao falar com a IA');
         }
 
-        aguardando.textContent = dados.resposta
-        historico.push({ role: 'assistant', content: dados.resposta })
-      } catch (erro) {
-        aguardando.className = 'mensagem erro'
-        aguardando.textContent = `Erro: ${erro.message}`
-        historico.pop() // remove a pergunta que falhou do histórico
-      } finally {
-        mensagem.disabled = false
-        btnEnviar.disabled = false
-        mensagem.focus()
-        caixaChat.scrollTop = caixaChat.scrollHeight
-      }
-    })
-  </script>
-</body>
+        aguardando.textContent = dados.resposta;
 
+        historico.push({
+          role: 'assistant',
+          content: dados.resposta
+        });
+
+      } catch (erro) {
+        aguardando.className = 'mensagem erro';
+        aguardando.textContent = `Erro: ${erro.message}`;
+
+        historico.pop();
+
+      } finally {
+        mensagem.disabled = false;
+        btnEnviar.disabled = false;
+        mensagem.focus();
+        caixaChat.scrollTop = caixaChat.scrollHeight;
+      }
+    });
+  </script>
+
+</body>
 </html>
