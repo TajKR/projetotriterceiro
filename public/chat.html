@@ -35,13 +35,14 @@
   <footer>© Taj Kozak Reichel - 2026 | Curitiba</footer>
 
   <script>
-    // ALERTA PARA TESTAR SE O RENDER ATUALIZOU
-    alert('NOVA VERSÃO DO CHAT');
-
-    // VERIFICA SE O USUÁRIO ESTÁ LOGADO
+    // VERIFICA SE EXISTE UM USUÁRIO SALVO
     const usuarioLogado = localStorage.getItem('usuarioChat');
 
-    if (!usuarioLogado) {
+    // MOSTRA O VALOR ENCONTRADO
+    alert('Usuário encontrado: ' + usuarioLogado);
+
+    // BLOQUEIA O ACESSO SE NÃO ESTIVER LOGADO
+    if (!usuarioLogado || usuarioLogado.trim() === '') {
       alert('Você precisa fazer login primeiro!');
       window.location.replace('login.html');
       throw new Error('Usuário não logado');
