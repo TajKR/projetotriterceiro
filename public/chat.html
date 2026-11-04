@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -36,6 +35,9 @@
   <footer>© Taj Kozak Reichel - 2026 | Curitiba</footer>
 
   <script>
+    // ALERTA PARA TESTAR SE O RENDER ATUALIZOU
+    alert('NOVA VERSÃO DO CHAT');
+
     // VERIFICA SE O USUÁRIO ESTÁ LOGADO
     const usuarioLogado = localStorage.getItem('usuarioChat');
 
@@ -50,7 +52,6 @@
     const mensagem = document.getElementById('mensagem');
     const btnEnviar = document.getElementById('btnEnviar');
 
-    // Guarda a conversa para a IA lembrar do contexto
     const historico = [];
 
     function adicionarMensagem(texto, tipo) {
@@ -105,7 +106,6 @@
       } catch (erro) {
         aguardando.className = 'mensagem erro';
         aguardando.textContent = `Erro: ${erro.message}`;
-
         historico.pop();
 
       } finally {
