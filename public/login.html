@@ -79,9 +79,14 @@
                     return;
                 }
 
-                loginMensagem.innerText = `${dados.mensagem}: ${dados.perfil}`;
+                loginMensagem.innerText = dados.mensagem;
                 loginMensagem.style.color = 'green';
 
+                // Salva que o usuário está logado
+                localStorage.setItem('usuarioChat', dados.usuario);
+
+                // Entra no chat
+                window.location.href = 'chat.html';
                 
                 emailEntrada.value = '';
                 senhaEntrada.value = '';
