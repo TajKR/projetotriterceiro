@@ -40,6 +40,13 @@
     // Guarda a conversa para a IA lembrar do contexto
     const historico = []
 
+    const usuarioLogado = localStorage.getItem('usuarioChat');
+
+if (!usuarioLogado) {
+    alert('Você precisa fazer seu cadastro e login primeiro!');
+    window.location.href = 'cadastro.html';
+}
+
     function adicionarMensagem(texto, tipo) {
       const div = document.createElement('div')
       div.className = `mensagem ${tipo}`
