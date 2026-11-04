@@ -35,13 +35,9 @@
   <footer>© Taj Kozak Reichel - 2026 | Curitiba</footer>
 
   <script>
-    // VERIFICA SE EXISTE UM USUÁRIO SALVO
+    // VERIFICA SE O USUÁRIO ESTÁ LOGADO
     const usuarioLogado = localStorage.getItem('usuarioChat');
 
-    // MOSTRA O VALOR ENCONTRADO
-    alert('Usuário encontrado: ' + usuarioLogado);
-
-    // BLOQUEIA O ACESSO SE NÃO ESTIVER LOGADO
     if (!usuarioLogado || usuarioLogado.trim() === '') {
       alert('Você precisa fazer login primeiro!');
       window.location.replace('login.html');
@@ -53,6 +49,7 @@
     const mensagem = document.getElementById('mensagem');
     const btnEnviar = document.getElementById('btnEnviar');
 
+    // Guarda a conversa para a IA lembrar do contexto
     const historico = [];
 
     function adicionarMensagem(texto, tipo) {
