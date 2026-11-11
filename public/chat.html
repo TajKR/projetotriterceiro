@@ -39,6 +39,10 @@
         // VERIFICA SE O USUÁRIO ESTÁ LOGADO
         const usuarioLogado = localStorage.getItem('usuarioChat');
 
+        const nomeUsuario = localStorage.getItem('nomeChat');
+
+document.getElementById('boasVindas').innerText =
+    `Bem-vindo ao Reino, ${nomeUsuario}!`;
         if (!usuarioLogado || usuarioLogado.trim() === '') {
             alert('Você precisa fazer seu cadastro e login primeiro!');
             window.location.replace('cadastro.html');
