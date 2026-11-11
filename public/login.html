@@ -1,102 +1,95 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!DOCTYPE html>  <html lang="pt-br">  <head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>login</title>  
+    <link rel="stylesheet" href="style.css" />  
+</head>  <body>  
+    <nav class="menu">  
+        <a href="index.html" class="link-menu">Home</a>  
+        <a href="historia.html" class="link-menu">Historia</a>  
+        <a href="chat.html" class="link-menu">Chat</a>  
+        <a href="login.html" class="link-menu ativo">Log-in</a>  
+        <a href="cadastro.html" class="link-menu">Cadastro</a>  
+    </nav>  <div class="conteiner-cadastro">  
+    <div class="conteiner-ch1">  
+        <h2>Login</h2><br>  
+    </div>  
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="style.css" />
-</head>
+    <div class="login">  
+        <label for="loginEmail">email</label><br>  
+        <input type="email" id="loginEmail" placeholder="Digite seu email" required><br><br>  
 
-<body>
-    <nav class="menu">
-        <a href="index.html" class="link-menu">Home</a>
-        <a href="historia.html" class="link-menu">Historia</a>
-        <a href="chat.html" class="link-menu">Chat</a>
-        <a href="login.html" class="link-menu ativo">Log-in</a>
-        <a href="cadastro.html" class="link-menu">Cadastro</a>
-    </nav>
+        <label for="loginSenha">senha</label><br>  
+        <input type="password" id="loginSenha" placeholder="Digite sua senha" required><br><br>  
 
-    <div class="conteiner-cadastro">
-        <div class="conteiner-ch1">
-            <h2>Login</h2><br>
-        </div>
+        <button id="btnlogin" class="card">Entrar</button>  
+        <div id="loginMensagem" class="mensagem"></div>  
+    </div>  
+</div>  
 
-        <div class="login">
-            <label for="loginEmail">email</label><br>
-            <input type="email" id="loginEmail" placeholder="Digite seu email" required><br><br>
+<footer>  
+    <p>© Taj Kozak Reichel - 2026 | Curitiba</p>  
+</footer>  
 
-            <label for="loginSenha">senha</label><br>
-            <input type="password" id="loginSenha" placeholder="Digite sua senha" required><br><br>
+<script>  
+    const btnlogin = document.querySelector('#btnlogin');  
+    const loginMensagem = document.querySelector('#loginMensagem');  
 
-            <button id="btnlogin" class="card">Entrar</button>
-            <div id="loginMensagem" class="mensagem"></div>
-        </div>
-    </div>
+    btnlogin.addEventListener('click', async ()=>{  
+        
+        const emailEntrada = document.querySelector('#loginEmail');  
+        const senhaEntrada = document.querySelector('#loginSenha');  
 
-    <footer>
-        <p>© Taj Kozak Reichel - 2026 | Curitiba</p>
-    </footer>
+          
+        const email = emailEntrada.value;  
+        const senha = senhaEntrada.value;  
 
-    <script>
-        const btnlogin = document.querySelector('#btnlogin');
-        const loginMensagem = document.querySelector('#loginMensagem');
+        if ( !email || !senha) {  
+            loginMensagem.innerText = 'Preencha todos os campos antes de enviar!'  
+            loginMensagem.style.color = 'red';  
+            return;  
+        }  
 
-        btnlogin.addEventListener('click', async () => {
+        loginMensagem.innerText = 'Dados enviados aguarde 5 segundos...';  
+        loginMensagem.style.color = 'orange';  
 
-            const emailEntrada = document.querySelector('#loginEmail');
-            const senhaEntrada = document.querySelector('#loginSenha');
+        try{  
+            const respostaBE = await fetch('/login', {  
+                method: 'POST',  
+                headers: {'Content-Type': 'application/json'},  
+                body: JSON.stringify({  
+                      
+                    email: email,  
+                    senha: senha  
+                })  
+            });  
 
-            const email = emailEntrada.value;
-            const senha = senhaEntrada.value;
+            const dados = await respostaBE.json();  
 
-            if (!email || !senha) {
-                loginMensagem.innerText = 'Preencha todos os campos antes de enviar!';
-                loginMensagem.style.color = 'red';
-                return;
-            }
+            if(!respostaBE.ok) {  
+                loginMensagem.innerText = `${dados.erro}`;  
+                loginMensagem.style.color = 'red';  
+                return;  
+            }  
 
-            loginMensagem.innerText = 'Verificando seus dados...';
-            loginMensagem.style.color = 'orange';
-            btnlogin.disabled = true;
+            loginMensagem.innerText = dados.mensagem;  
+            loginMensagem.style.color = 'green';  
 
-            try {
-                const respostaBE = await fetch('/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: email,
-                        senha: senha
-                    })
-                });
+            // Salva que o usuário está logado  
+            localStorage.setItem('usuarioChat', dados.usuario);  
 
-                const dados = await respostaBE.json();
+            // Entra no chat  
+            window.location.href = 'chat.html';  
+              
+            emailEntrada.value = '';  
+            senhaEntrada.value = '';  
+        }  
+        catch(erro) {  
+            console.error('Erro na requisição:', erro);  
+            loginMensagem.innerText = 'Erro ao conectar com o servidor!!';  
+            loginMensagem.style.color = 'red';  
+        }  
+    });  
+</script>
 
-                if (!respostaBE.ok) {
-                    loginMensagem.innerText = dados.erro;
-                    loginMensagem.style.color = 'red';
-                    btnlogin.disabled = false;
-                    return;
-                }
-
-                loginMensagem.innerText = dados.mensagem;
-                loginMensagem.style.color = 'green';
-
-                // Salva que o usuário está logado
-                localStorage.setItem('usuarioChat', dados.usuario);
-                localStorage.setItem('nomeChat', dados.nome);
-
-                // Vai para o chat
-                window.location.href = 'chat.html';
-
-            } catch (erro) {
-                console.error('Erro na requisição:', erro);
-                loginMensagem.innerText = 'Erro ao conectar com o servidor!!';
-                loginMensagem.style.color = 'red';
-                btnlogin.disabled = false;
-            }
-        });
-    </script>
-</body>
-
-</html>
+</body>  </html>
