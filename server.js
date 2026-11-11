@@ -14,107 +14,108 @@ app.use(cors());
 
 const user = [];
 
-
 app.post('/cadastro', (req, res)=>{
-    const {usuario, email, senha} = req.body;
+const {usuario, email, senha} = req.body;
 
-    if (!usuario || !email || !senha) {
-        return res.status(400).json({
-            erro: "Preencha todos os campos"
-        });
-    }
+if (!usuario || !email || !senha) {  
+    return res.status(400).json({  
+        erro: "Preencha todos os campos"  
+    });  
+}  
 
-    if (senha.length < 6) {
-        return res.status(400).json({
-            erro: "A senha deve ter 6 caracteres ou mais"
-        });
-    }
+if (senha.length < 6) {  
+    return res.status(400).json({  
+        erro: "A senha deve ter 6 caracteres ou mais"  
+    });  
+}  
 
-    const emailUsado = user.find((busca) => busca.email === email);
+const emailUsado = user.find((busca) => busca.email === email);  
 
-    if (emailUsado) {
-        return res.status(409).json({
-            erro: "Email já está em uso"
-        });
-    }
+if (emailUsado) {  
+    return res.status(409).json({  
+        erro: "Email já está em uso"  
+    });  
+}  
 
-    console.log(`Recebido, aguarde 5 segundo`);
+console.log(`Recebido, aguarde 5 segundo`);  
 
-    user.push({usuario, email, senha});
+user.push({usuario, email, senha});  
 
-    setTimeout(()=>{
-        console.log(`Cadastrado o ${usuario} com o Email ${email}`);
+setTimeout(()=>{  
+    console.log(`Cadastrado o ${usuario} com o Email ${email}`);  
 
-        res.json({
-            mensagem: "Cadastrado com Sucesso!!",
-            perfil: `Perfil ${usuario} cadastrado com o email ${email}`
-        });
-    }, 5000);
+    res.json({  
+        mensagem: "Cadastrado com Sucesso!!",  
+        perfil: `Perfil ${usuario} cadastrado com o email ${email}`  
+    });  
+}, 5000);
+
 });
 
 app.post('/login', (req, res)=>{
-    const {email, senha} = req.body;
-    
-    if (!email || !senha) {
-        return res.status(400).json({erro:"Preencha todos os campos"});
-    }
+const {email, senha} = req.body;
 
-    const emailExiste = user.find((busca)=> busca.email.toLowerCase() === email.toLowerCase());
+if (!email || !senha) {  
+    return res.status(400).json({erro:"Preencha todos os campos"});  
+}  
 
-    if (!emailExiste || emailExiste.senha != senha) {
-        return res.status(400).json({erro:"Email ou senha incorretos!"});
-    }
+const emailExiste = user.find((busca)=> busca.email.toLowerCase() === email.toLowerCase());  
 
-    return res.json({
-        mensagem: "Login realizado com Sucesso!!",
-        usuario: emailExiste.email
-        nome: emailExiste.usuario
-    });
+if (!emailExiste || emailExiste.senha != senha) {  
+    return res.status(400).json({erro:"Email ou senha incorretos!"});  
+}  
+
+return res.json({  
+    mensagem: "Login realizado com Sucesso!!",  
+    usuario: emailExiste.email  
+});
+
 })
 
 app.post('/chat', async (req, res) => {
-    try {
-        const API_KEY = process.env.GROQ_API_KEY
+try {
+const API_KEY = process.env.GROQ_API_KEY
 
-        const historico = req.body.historico || []
+const historico = req.body.historico || []  
 
-        const mensagens = [
-            {
-                role: "system",
-                content: "seja bem curto e direto com as respostas, a não ser que seja sobre o castle crashers dai você pode falar com mais entusiasmo, vocês são um grupo de heróis daquele jogo castle crashers, então atue como cavaleiros"
-            },
-            ...historico
-        ]
+    const mensagens = [  
+        {  
+            role: "system",  
+            content: "seja bem curto e direto com as respostas, a não ser que seja sobre o castle crashers dai você pode falar com mais entusiasmo, vocês são um grupo de heróis daquele jogo castle crashers, então atue como cavaleiros"  
+        },  
+        ...historico  
+    ]  
 
-        const respostaBruta = await fetch(URL_API, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${API_KEY}`
-            },
-            body: JSON.stringify({
-                model: MODELO,
-                messages: mensagens
-            })
-        })
+    const respostaBruta = await fetch(URL_API, {  
+        method: 'POST',  
+        headers: {  
+            'Content-Type': 'application/json',  
+            'Authorization': `Bearer ${API_KEY}`  
+        },  
+        body: JSON.stringify({  
+            model: MODELO,  
+            messages: mensagens  
+        })  
+    })  
 
-        const dados = await respostaBruta.json()
+    const dados = await respostaBruta.json()  
 
-        if (!respostaBruta.ok) {
-            return res.status(respostaBruta.status).json({
-                erro: dados.error?.message || "Erro ao consultar a API"
-            })
-        }
+    if (!respostaBruta.ok) {  
+        return res.status(respostaBruta.status).json({  
+            erro: dados.error?.message || "Erro ao consultar a API"  
+        })  
+    }  
 
-        const resposta = dados.choices[0].message.content
-        return res.json({ resposta })
+    const resposta = dados.choices[0].message.content  
+    return res.json({ resposta })  
 
-    } catch (erro) {
-        console.error(erro)
-        return res.status(500).json({ erro: "Erro interno no servidor" })
-    }
+} catch (erro) {  
+    console.error(erro)  
+    return res.status(500).json({ erro: "Erro interno no servidor" })  
+}
+
 })
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`)
+console.log(Servidor rodando na porta ${PORT})
 })
