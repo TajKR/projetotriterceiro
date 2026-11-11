@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -16,7 +17,7 @@
         <a class="link-menu" href="login.html">Log-in</a>
         <a class="link-menu ativo" href="cadastro.html">Cadastro</a>
     </nav>
-    
+
     <div class="conteiner-cadastro">
         <div class="conteiner-ch1">
             <h2>Cadastro</h2><br>
@@ -45,7 +46,7 @@
         const btnCadastro = document.querySelector('#btnCadastro');
         const cadMensagem = document.querySelector('#cadMensagem');
 
-        btnCadastro.addEventListener('click', async ()=>{
+        btnCadastro.addEventListener('click', async () => {
             const usuarioEntrada = document.querySelector('#cadUsuario');
             const emailEntrada = document.querySelector('#cadEmail');
             const senhaEntrada = document.querySelector('#cadSenha');
@@ -55,18 +56,19 @@
             const senha = senhaEntrada.value;
 
             if (!usuario || !email || !senha) {
-                cadMensagem.innerText = 'Preencha todos os campos antes de enviar!'
+                cadMensagem.innerText = 'Preencha todos os campos antes de enviar!';
                 cadMensagem.style.color = 'red';
                 return;
             }
 
             cadMensagem.innerText = 'Dados enviados aguarde 5 segundos...';
             cadMensagem.style.color = 'orange';
+            btnCadastro.disabled = true;
 
-            try{
+            try {
                 const respostaBE = await fetch('/cadastro', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         usuario: usuario,
                         email: email,
@@ -76,9 +78,10 @@
 
                 const dados = await respostaBE.json();
 
-                if(!respostaBE.ok) {
-                    cadMensagem.innerText = `${dados.erro}`;
+                if (!respostaBE.ok) {
+                    cadMensagem.innerText = dados.erro;
                     cadMensagem.style.color = 'red';
+                    btnCadastro.disabled = false;
                     return;
                 }
 
@@ -88,11 +91,16 @@
                 usuarioEntrada.value = '';
                 emailEntrada.value = '';
                 senhaEntrada.value = '';
-            }
-            catch(erro) {
+
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+
+            } catch (erro) {
                 console.error('Erro na requisição:', erro);
                 cadMensagem.innerText = 'Erro ao conectar com o servidor!!';
                 cadMensagem.style.color = 'red';
+                btnCadastro.disabled = false;
             }
         });
     </script>
