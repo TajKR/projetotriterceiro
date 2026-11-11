@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
+    <title>Login</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -16,7 +16,7 @@
         <a href="login.html" class="link-menu ativo">Log-in</a>
         <a href="cadastro.html" class="link-menu">Cadastro</a>
     </nav>
-    
+
     <div class="conteiner-cadastro">
         <div class="conteiner-ch1">
             <h2>Login</h2><br>
@@ -42,30 +42,29 @@
         const btnlogin = document.querySelector('#btnlogin');
         const loginMensagem = document.querySelector('#loginMensagem');
 
-        btnlogin.addEventListener('click', async ()=>{
-          
+        btnlogin.addEventListener('click', async () => {
+
             const emailEntrada = document.querySelector('#loginEmail');
             const senhaEntrada = document.querySelector('#loginSenha');
 
-            
             const email = emailEntrada.value;
             const senha = senhaEntrada.value;
 
-            if ( !email || !senha) {
-                loginMensagem.innerText = 'Preencha todos os campos antes de enviar!'
+            if (!email || !senha) {
+                loginMensagem.innerText = 'Preencha todos os campos antes de enviar!';
                 loginMensagem.style.color = 'red';
                 return;
             }
 
-            loginMensagem.innerText = 'Dados enviados aguarde 5 segundos...';
+            loginMensagem.innerText = 'Verificando seus dados...';
             loginMensagem.style.color = 'orange';
+            btnlogin.disabled = true;
 
-            try{
+            try {
                 const respostaBE = await fetch('/login', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        
                         email: email,
                         senha: senha
                     })
@@ -73,9 +72,10 @@
 
                 const dados = await respostaBE.json();
 
-                if(!respostaBE.ok) {
-                    loginMensagem.innerText = `${dados.erro}`;
+                if (!respostaBE.ok) {
+                    loginMensagem.innerText = dados.erro;
                     loginMensagem.style.color = 'red';
+                    btnlogin.disabled = false;
                     return;
                 }
 
@@ -85,16 +85,14 @@
                 // Salva que o usuário está logado
                 localStorage.setItem('usuarioChat', dados.usuario);
 
-                // Entra no chat
+                // Vai para o chat
                 window.location.href = 'chat.html';
-                
-                emailEntrada.value = '';
-                senhaEntrada.value = '';
-            }
-            catch(erro) {
+
+            } catch (erro) {
                 console.error('Erro na requisição:', erro);
                 loginMensagem.innerText = 'Erro ao conectar com o servidor!!';
                 loginMensagem.style.color = 'red';
+                btnlogin.disabled = false;
             }
         });
     </script>
